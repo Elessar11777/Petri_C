@@ -12,7 +12,6 @@ import webbrowser
 import os
 from datetime import datetime
 import sys
-from os.path import exists
 
 import HDR_Aligning as al
 import HDR_Saver as hs
