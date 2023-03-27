@@ -1,12 +1,12 @@
-import pysftp
-import subprocess
-
-HOSTNAME = "194.186.150.221"
-USERNAME = "user"
-PASSWORD = "1qaz!QAZ"
-cnopts = pysftp.CnOpts(knownhosts='known_hosts')
-SERVER_DIRECTORY = "/srv/filehosting/images/gracia-test"
-SEARCH_TERM = "Pr"
+# import pysftp
+# import subprocess
+#
+# HOSTNAME = "194.186.150.221"
+# USERNAME = "user"
+# PASSWORD = "1qaz!QAZ"
+# cnopts = pysftp.CnOpts(knownhosts='known_hosts')
+# SERVER_DIRECTORY = "/srv/filehosting/images/gracia-test"
+# SEARCH_TERM = "Pr"
 
 if __name__ == '__main__':
     with pysftp.Connection(HOSTNAME, username=USERNAME, password=PASSWORD, cnopts=cnopts) as sftp:
