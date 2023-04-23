@@ -2,13 +2,9 @@ import cv2
 import numpy as np
 import os
 
-import HDR_Aligning
-import HDR_Saver
-import HDR_CRF
-import HDR_Merging
+from resources.global_tonemaping import HDR_Aligning, HDR_CRF, HDR_CRF_imp_export, HDR_Merging, HDR_Saver
 import HDR_Tonemaping
 import LDR_Sharpening
-import HDR_CRF_imp_export
 import LDR_Saver
 import Path_handler
 

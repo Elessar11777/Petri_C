@@ -1,9 +1,9 @@
 import numpy
 import cv2
 
-import HDR_Aligning
+from resources.global_tonemaping import HDR_Aligning, HDR_CRF_imp_export
 import HDR_Test
-import HDR_CRF_imp_export
+
 
 def merging(images_w_exposure, crf, selector="P"):
     if isinstance(images_w_exposure, tuple):

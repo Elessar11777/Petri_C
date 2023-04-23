@@ -13,15 +13,8 @@ import os
 from datetime import datetime
 import sys
 
-import HDR_Aligning as al
-import HDR_Saver as hs
-import HDR_CRF
-import HDR_Merging as mg
-import HDR_Tonemaping as ton
-import LDR_Sharpening as sh
-import HDR_CRF_imp_export as ie
-import LDR_Saver as sv
-import Path_handler as ph
+from resources.global_tonemaping import HDR_Aligning as al, HDR_CRF, HDR_CRF_imp_export as ie, HDR_Merging as mg, \
+    HDR_Saver as hs, HDR_Tonemaping as ton, LDR_Saver as sv, LDR_Sharpening as sh, Path_handler as ph
 import SFTP
 
 def resource_path(relative_path):

@@ -1,10 +1,6 @@
 import cv2
 
-import HDR_Aligning
-import HDR_Test
-import HDR_CRF
-import HDR_Merging
-import HDR_Tonemaping
+from resources.global_tonemaping import HDR_Aligning, HDR_CRF, HDR_Merging, HDR_Test, HDR_Tonemaping
 import LDR_Sharpening
 
 def LDR_saver(ldr, path):

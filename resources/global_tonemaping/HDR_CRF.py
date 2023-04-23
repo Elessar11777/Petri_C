@@ -1,7 +1,7 @@
-import HDR_Aligning
+from resources.global_tonemaping import HDR_Aligning
 import HDR_Test
 import cv2
-import HDR_Aligning
+import resources.global_tonemaping.HDR_Aligning
 import HDR_CRF
 import HDR_Merging
 import HDR_Tonemaping
