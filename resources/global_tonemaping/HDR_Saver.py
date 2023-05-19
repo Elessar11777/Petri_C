@@ -1,9 +1,7 @@
 import cv2
 
-import HDR_Aligning
+from resources.global_tonemaping import HDR_Aligning, HDR_CRF, HDR_Merging
 import HDR_Test
-import HDR_CRF
-import HDR_Merging
 
 
 def HDR_saver(hdr, path):

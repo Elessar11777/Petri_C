@@ -1,9 +1,9 @@
 import json
 import numpy
 
-import HDR_Aligning
+from resources.global_tonemaping import HDR_Aligning, HDR_CRF
 import HDR_Test
-import HDR_CRF
+
 
 def CRF_JSON_exporter(crf, path):
     with open(path, 'wb') as f:
