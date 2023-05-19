@@ -6,7 +6,7 @@ import HDR_Test
 
 
 def merging(images_w_exposure, crf, selector="P"):
-    if isinstance(images_w_exposure, tuple):
+    if isinstance(images_w_exposure, dict):
         pass
     else:
         raise TypeError("Only tuple are allowed for 'images_w_exposure'")
@@ -16,13 +16,15 @@ def merging(images_w_exposure, crf, selector="P"):
     else:
         raise TypeError("Only numpy.ndarray are allowed for 'crf'")
 
-    cv_images, exposure_times = images_w_exposure
+    # cv_images, exposure_times = images_w_exposure
+    exposures = list(cv_images.keys())
+    image_list = list(cv_images.values())
 
     if selector == "P":
         try:
             print("Merging perif images into one HDR image ... ")
             mergeDebevec = cv2.createMergeDebevec()
-            hdrDebevec = mergeDebevec.process(cv_images, exposure_times, crf)
+            hdrDebevec = mergeDebevec.process(image_list, exposures, crf)
         except Exception as e:
             print("Merging failed")
             print(e)
@@ -33,7 +35,7 @@ def merging(images_w_exposure, crf, selector="P"):
         try:
             print("Merging bottom images into one HDR image ... ")
             mergeDebevec = cv2.createMergeDebevec()
-            hdrDebevec = mergeDebevec.process(cv_images, exposure_times, crf)
+            hdrDebevec = mergeDebevec.process(image_list, exposures, crf)
         except Exception as e:
             print("Merging failed")
             print(e)
