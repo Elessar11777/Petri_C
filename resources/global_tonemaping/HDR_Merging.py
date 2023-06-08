@@ -1,54 +1,30 @@
-import numpy
 import cv2
+import numpy
+from logger import aeya_logger
 
-from resources.global_tonemaping import HDR_Aligning, HDR_CRF_imp_export
-import HDR_Test
-
-
-def merging(images_w_exposure, crf, selector="P"):
-    if isinstance(images_w_exposure, dict):
+def merging(exp_img_dict, crf_dict):
+    if isinstance(exp_img_dict, dict):
         pass
     else:
         raise TypeError("Only tuple are allowed for 'images_w_exposure'")
-
-    if isinstance(crf, numpy.ndarray):
+    if isinstance(crf_dict, dict):
         pass
     else:
         raise TypeError("Only numpy.ndarray are allowed for 'crf'")
 
-    # cv_images, exposure_times = images_w_exposure
-    exposures = list(cv_images.keys())
-    image_list = list(cv_images.values())
+    merging_dict = {}
 
-    if selector == "P":
-        try:
-            print("Merging perif images into one HDR image ... ")
-            mergeDebevec = cv2.createMergeDebevec()
-            hdrDebevec = mergeDebevec.process(image_list, exposures, crf)
-        except Exception as e:
-            print("Merging failed")
-            print(e)
+    for light, exp_img in exp_img_dict.items():
+        aeya_logger.info(f"Starting merging {light} images into one HDR image")
+        exposure_list = []
+        image_list = []
+        for exposure, image in exp_img.items():
+            exposure_list.append(exposure)
+            image_list.append(image)
 
-        print("Merging complete")
+        exposure_list = numpy.array(exposure_list, dtype=numpy.float32)
 
-    if selector == "B":
-        try:
-            print("Merging bottom images into one HDR image ... ")
-            mergeDebevec = cv2.createMergeDebevec()
-            hdrDebevec = mergeDebevec.process(image_list, exposures, crf)
-        except Exception as e:
-            print("Merging failed")
-            print(e)
-
-        print("Merging complete")
-
-    return hdrDebevec
-
-if __name__ == "__main__":
-    cv_images, times = HDR_Test.test_cv_images(selector="KP")
-    result_aligning = HDR_Aligning.aligning(cv_images, times)
-    #CRF = HDR_CRF.CRF_calculate(result_aligning)
-    CRF = HDR_CRF_JSON.CRF_JSON_importer('crf.json')
-    print(CRF)
-    print(merging(result_aligning, CRF))
-    print(type(merging(result_aligning, CRF)))
+        mergeDebevec = cv2.createMergeDebevec()
+        merging_dict[light] = mergeDebevec.process(image_list, exposure_list, crf_dict[light])
+        aeya_logger.info(f"Merging {light} complete")
+    return merging_dict

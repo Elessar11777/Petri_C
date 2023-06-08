@@ -1,51 +1,52 @@
-from resources.global_tonemaping import HDR_Aligning
-import HDR_Test
 import cv2
-import resources.global_tonemaping.HDR_Aligning
-import HDR_CRF
-import HDR_Merging
-import HDR_Tonemaping
-import LDR_Sharpening
-import HDR_CRF_imp_export
-import HDR_Saver
-import Path_handler
+import numpy
+
+from logger import aeya_logger
 
 def CRF_calculate(images_w_exposure, method="Debovec"):
-    if isinstance(images_w_exposure, tuple):
+    aeya_logger.info("Starting CRF calculation")
+    if isinstance(images_w_exposure, dict):
         pass
     else:
-        raise TypeError("Only tuple are allowed for 'images_w_exposure'")
+        raise TypeError("Only dict are allowed for 'images_w_exposure'")
 
-    images, exposure_times = images_w_exposure
+    processing_dict = {
+        "B": {
+            "exposures": [],
+            "numpy_exposures": numpy.zeros((100,)),
+            "images": []
+        },
+        "P": {
+            "exposures": [],
+            "numpy_exposures": numpy.zeros((100,)),
+            "images": []
+        }
+    }
 
+    response_dict = {
+        "B": "",
+        "P": ""
+    }
     try:
-        print("Calculating Camera Response Function (CRF) ... ")
+        for light, image_dict in images_w_exposure.items():
+            for exposure, image in image_dict.items():
+                processing_dict[light]["exposures"].append(exposure)
+                processing_dict[light]["images"].append(image)
 
-        if method == "Debovec":
-            calibrateDebevec = cv2.createCalibrateDebevec()
-            responseDebevec = calibrateDebevec.process(images, exposure_times)
-        else:
-            calibrateDebevec = cv2.createCalibrateRobertson()
-            responseDebevec = calibrateDebevec.process(images, exposure_times)
+            processing_dict[light]["numpy_exposures"] = numpy.array(processing_dict[light]["exposures"], dtype=numpy.float32)
 
+            if method == "Debovec":
+                response_dict[light] = cv2.createCalibrateDebevec().process(processing_dict[light]["images"],
+                                                                processing_dict[light]["numpy_exposures"])
+
+            elif method == "Robertson":
+                response_dict[light] = cv2.createCalibrateRobertson().process(processing_dict[light]["images"],
+                                                                processing_dict[light]["numpy_exposures"])
     except Exception as e:
-        print("Calculating CRF failed")
-        print(e)
+        aeya_logger.error("Calculating CRF failed")
+        aeya_logger.error(e)
         return
 
-    print("CRF calculation is complete")
+    aeya_logger.info("CRF calculation is complete")
 
-    return responseDebevec
-
-if __name__ == "__main__":
-    cv_images, times = LDR_hist_equalizer.test_cv_images(selector="Img_test_", image_format="tiff")
-    result_aligning = HDR_Aligning.aligning(cv_images, times)
-    #CRF = CRF_calculate(result_aligning, method="Debovec")
-    #HDR_CRF_imp_export.CRF_JSON_exporter(CRF, "./CRFs/CRF_Bottom.npy")
-    CRF = HDR_CRF_imp_export.CRF_JSON_importer("./CRFs/CRF_B_100_4000_100_39.npy")
-    result_merging = HDR_Merging.merging(result_aligning, CRF, selector="P")
-    HDR_saver.HDR_saver(result_merging)
-    result_merging = cv2.flip(result_merging, 0)
-    result_tonemaping = HDR_Tonemaping.tonemaping(result_merging, selector="B")
-    result_sharpening = LDR_Sharpening.LDR_sharpen(result_tonemaping)
-    cv2.imwrite("test2.png", result_sharpening, [int(cv2.IMWRITE_PNG_COMPRESSION),0])
+    return response_dict

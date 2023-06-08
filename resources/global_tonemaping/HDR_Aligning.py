@@ -1,38 +1,43 @@
-import HDR_Test
-
 import cv2
+from logger import aeya_logger
 
 def aligning(im_dict):
     """
     Function takes list of opencv images and returns them as list of aligned images
-    :param cv_images_in: List of opencv images
+    :param im_dict: List of opencv images
     :return: Tuple of list of aligned opencv images and list of exposure times in numpy.ndarray
     """
-    if isinstance(cv_images, dict):
+    aeya_logger.info("Starting aligning")
+    if isinstance(im_dict, dict):
         pass
     else:
-        raise TypeError("Only lists are allowed for 'cv_images'")
-    keys = list(cv_images.keys())
-    image_list = list(cv_images.values())
-    aligned_images = [None] * len(image_list)
+        raise TypeError("Only lists are allowed for 'im_dict'")
 
-    print("Starting aligning images...")
+    lights_dict = {
+        "exposures": {
+            "B": [],
+            "P": []
+        },
+        "images": {
+            "B": [],
+            "P": []
+        }
+    }
 
-    try:
+    result_dict = {
+            "B": [],
+            "P": []
+    }
+
+    for light, dictionary in im_dict.items():
+        for exposure, image in dictionary.items():
+            lights_dict["exposures"][light].append(exposure)
+            lights_dict["images"][light].append(image)
+
         alignMTB = cv2.createAlignMTB()
-        alignMTB.process(src=image_list, dst=aligned_images)
-        aligned_dict = dict(zip(keys, aligned_images))
+        alignMTB.process(src=lights_dict["images"][light], dst=lights_dict["images"][light])
+        result_dict[light] = dict(zip(lights_dict["exposures"][light], lights_dict["images"][light]))
 
-    except Exception as e:
-        print("Images aligning failed")
-        print(e)
-        return
+    aeya_logger.info("Aligning is complete")
+    return result_dict
 
-    print("Aligning is complete")
-
-    return aligned_dict
-
-if __name__ == "__main__":
-    images, times = HDR_Test.test_cv_images(selector="KP")
-    result_aligning = aligning(images, times)
-    print(result_aligning)

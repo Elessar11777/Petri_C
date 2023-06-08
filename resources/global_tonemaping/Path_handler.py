@@ -3,13 +3,15 @@
 from datetime import datetime
 import os
 from resources.Values.CodeValues import Paths
+from logger import aeya_logger
 
 
 
 def common_path_handler():
     for path in Paths:
-        if not os.path.exists(os.path.dirname(path)):
-            os.makedirs(os.path.dirname(path))
+        if not os.path.exists(os.path.dirname(path.value)):
+            os.makedirs(os.path.dirname(path.value))
+            aeya_logger.info(f"Creating {path.value}.")
 
 
 
@@ -51,5 +53,3 @@ def file_path_handler(device, selector, time="", exposure="", source=False, inpu
                     f"{current_time}_{selector}{input}{exposure}.{format}"
 
     return save_path
-
-common_path_handler()

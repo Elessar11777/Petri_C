@@ -2,8 +2,8 @@
     Migrate from MATLAB's tonemap function
 """
 import numpy as np
-import util as util
-import clahe as clahe
+import resources.local_tonemapping.acessories.util as util
+import resources.local_tonemapping.acessories.clahe as clahe
 
 def local_tonemap(E, l_remap=(0, 1), saturation=1., gamma_=2.2, numtiles=(24, 24)):
     """

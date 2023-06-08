@@ -2,12 +2,8 @@ import cv2
 import numpy as np
 import os
 
-from resources.global_tonemaping import HDR_Aligning, HDR_CRF, HDR_CRF_imp_export, HDR_Merging, HDR_Saver
-import HDR_Tonemaping
-import LDR_Sharpening
-import LDR_Saver
-import Path_handler
-
+from resources.global_tonemaping import HDR_Aligning, HDR_CRF, HDR_CRF_imp_export, HDR_Merging, HDR_Saver, \
+HDR_Tonemaping, HDR_Tonemaping, LDR_Saver, Path_handler
 
 def test_cv_images(selector="KP", image_format="bmp", dir="./images/spot-test/27_01_2023/"):
     """

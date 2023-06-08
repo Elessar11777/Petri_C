@@ -1,28 +1,35 @@
-import json
 import numpy
+import os
+from logger import aeya_logger
 
-from resources.global_tonemaping import HDR_Aligning, HDR_CRF
-import HDR_Test
+CRF_B_PATH = "./images/configs/crf_bottom.npy"
+CRF_P_PATH = "./images/configs/crf_perif.npy"
+
+PATH_DICT = {
+        "B": CRF_B_PATH,
+        "P": CRF_P_PATH
+    }
+
+def CRF_JSON_exporter(crf_dict):
+    if os.path.exists(PATH_DICT["B"]):
+        os.remove(PATH_DICT["B"])
+    if os.path.exists(PATH_DICT["P"]):
+        os.remove(PATH_DICT["P"])
 
 
-def CRF_JSON_exporter(crf, path):
-    with open(path, 'wb') as f:
-        numpy.save(f, crf)
-        #json.dump(crf_list, f)
-    print(f"CRF exported in {path}")
+    for light, crf in crf_dict.items():
+        with open(PATH_DICT[light], "wb") as f:
+            numpy.save(f, crf)
+        aeya_logger.info(f"CRF exported in {PATH_DICT[light]}")
 
-def CRF_JSON_importer(name):
-    with open(name, 'r') as f:
-        array = numpy.load(name, allow_pickle=True)
-    print("CRF is loaded")
-    return array
+def CRF_JSON_importer():
+    crf_dict = {
+        "B": "",
+        "P": ""
+    }
+    for light, path in PATH_DICT.items():
+        with open(path, 'r') as f:
+            crf_dict[light] = numpy.load(path, allow_pickle=True)
 
-if __name__ == "__main__":
-    cv_images, times = HDR_Test.test_cv_images(selector="KP")
-    result_aligning = HDR_Aligning.aligning(cv_images, times)
-    CRF = HDR_CRF.CRF_calculate(result_aligning)
-    print({f"CRF calculated is /n {CRF}"})
-
-    CRF_JSON_exporter(CRF, path="./images/configs/crf_bottom.npy")
-    CRF_imported = CRF_JSON_importer("./images/configs/crf_bottom.npy")
-    print(f"CRF imported is /n {CRF_imported}")
+    aeya_logger.info("CRF is loaded")
+    return crf_dict

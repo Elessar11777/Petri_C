@@ -41,7 +41,10 @@ class GUI(Enum):
 class GUITexts(Enum):
     # Modes
     SPOT = "Спот-тест"
-    GRACIA = "Метод Грация"
+    GRACIA = "Метод Грациа"
+    # Tonemap Modes
+    LOCAL = "Локальное тонирование"
+    GLOBAL = "Глобальное тонирование"
     # Camera connection status
     NOT_CONNECTED = "Камера не подключена"
     CONNECTED = "Камера подключена"
@@ -64,11 +67,11 @@ class GUITexts(Enum):
     # Main page labels
     CODE_LABEL = "Код:"
     # Settings labels
-    EXPOSURE_BOTTOM_LABEL  = "Экспозиция просвет"
-    EXPOSURE_PERIF_LABEL  = "Экспозиция периферия"
-    EXPOSURE_MIN_LABEL  = "Минимальная"
-    EXPOSURE_MAX_LABEL  = "Максимальная"
-    EXPOSURE_NUM_LABEL  = "Количество"
+    EXPOSURE_BOTTOM_LABEL = "Экспозиция просвет"
+    EXPOSURE_PERIF_LABEL = "Экспозиция периферия"
+    EXPOSURE_MIN_LABEL = "Минимальная"
+    EXPOSURE_MAX_LABEL = "Максимальная"
+    EXPOSURE_NUM_LABEL = "Количество"
     EXPOSURE_NUM_CALIBRATION_LABEL = "Количество калибровочное"
 
     POSTPROCESSING_LABEL = "Постобработка"
@@ -126,6 +129,13 @@ class ParameterNames(Enum):
     GAMMA_PERIF = "gamma_perif"
     SATURATION_PERIF = "saturation_perif"
     DEVICE = "device"
+    PROCESSING_MODE = "tonemapping"
+    HDR_LAMBDA = "HDR_lambda"
+    HDR_PIXELS = "HDR_pixels"
+    LOCAL_SATURATION = "local_saturation"
+    LOCAL_GAMMA = "local_gamma"
+    BATCH_SIZE = "batch_size"
+
 
 
 class Parameters():
@@ -147,5 +157,11 @@ class Parameters():
             ParameterNames.SATURATION_BOTTOM.value: 2.0,
             ParameterNames.GAMMA_PERIF.value: 2.0,
             ParameterNames.SATURATION_PERIF.value: 1.2,
-            ParameterNames.DEVICE.value: "Gracia"
+            ParameterNames.DEVICE.value: "Gracia",
+            ParameterNames.PROCESSING_MODE.value: "local",
+            "HDR_lambda": 50,
+            "HDR_pixels": 150,
+            "local_saturation": 1,
+            "local_gamma": 2.2,
+            "batch_size": 24
         }

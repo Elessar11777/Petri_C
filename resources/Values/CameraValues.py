@@ -4,7 +4,7 @@ import gxipy as gx
 class CameraParameters(Enum):
     WIDTH = 2064
     HEIGHT = 2064
-    OFFSET_X = 496
+    OFFSET_X = 552
     OFFSET_Y = 0
     PIXEL_FORMAT = gx.GxPixelFormatEntry.BAYER_RG10
     ACQUISITION_MODE = gx.GxAcquisitionModeEntry.CONTINUOUS
