@@ -9,10 +9,10 @@ class ButtonActions(Enum):
     SETTINGS_SAVE_BUTTON = CodeValues.GUITexts.SETTINGS_SAVE_BUTTON.value
 
 button_widgets = [
-    (ButtonActions.EXPOSURE_BUTTON.value, 0.025, 0.9, "normal"),
-    (ButtonActions.MODES_BUTTON.value, 0.265, 0.9, "disabled"),
-    (ButtonActions.POSTPROCESSING_BUTTON.value, 0.5, 0.9, "normal"),
-    (ButtonActions.SETTINGS_SAVE_BUTTON.value, 0.75, 0.9, "normal")
+    (ButtonActions.EXPOSURE_BUTTON.value, 0.04, 0.9, "normal"),
+    (ButtonActions.MODES_BUTTON.value, 0.165, 0.9, "disabled"),
+    (ButtonActions.POSTPROCESSING_BUTTON.value, 0.290, 0.9, "normal"),
+    (ButtonActions.SETTINGS_SAVE_BUTTON.value, 0.85, 0.9, "normal")
 ]
 
 segmented_button_widgets =[

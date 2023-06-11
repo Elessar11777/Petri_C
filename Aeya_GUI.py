@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 import tkinter as tk
 import threading
 import numpy
@@ -11,15 +10,16 @@ import os
 import sys
 import gxipy as gx
 import cv2
+import subprocess
+import multiprocessing
 
-from multiprocessing import Queue, freeze_support
-
+import uploader
 # Default parameters:
 from resources.Values import CodeValues
 # Setting processor
 import Settings_processor
 # Setting widgets
-from resources.SecondaryPagesWidgets import SettingsWidgets3, SettingsWidgets2, SettigngWidgets1
+from resources.SecondaryPagesWidgets import SettingsWidgets3, SettingsWidgets2, SettigngWidgets1, SyncWidgets
 # Camera settings
 from resources.camera import CameraParameters
 # Global tonemap resources
@@ -28,12 +28,12 @@ from resources.global_tonemaping import HDR_Aligning as al, HDR_CRF, HDR_CRF_imp
 # Local tonemap resources
 from resources.local_tonemapping import accept_image, hdr_debevec, irradiance, process_local_tonemap
 # Web client resources
-from resources.web import client, synchronizer_3
+from resources.web import client
+import db_manager
 # Mask countouring resources
 from resources.contouring import countoring
 # Logger
 from logger import aeya_logger
-
 
 def resource_path(relative_path):
     """ Get absolute path to resource, works for dev and for PyInstaller """
@@ -42,6 +42,10 @@ def resource_path(relative_path):
     else:
         base_path = os.getcwd()
     return os.path.join(base_path, relative_path)
+
+def run_script():
+    command = "python uploader.py"
+    subprocess.run(command, shell=True)
 
 
 class App(ct.CTk):
@@ -52,16 +56,25 @@ class App(ct.CTk):
         # Creating all necessary directories if required:
         ph.common_path_handler()
 
-        # Sync parameters
-        self.queue = Queue()
-        self.status_queue = Queue()
-        self.sender = synchronizer_3.JsonSender(self.queue, self.status_queue)
-        self.sender.start()
+        try:
+            with open('pid_file.txt', 'r') as f:
+                pid = int(f.read())
+            os.kill(pid, 0)  # this will throw an exception if the pid is not running
+        except:
+            print("pid file not exist")
 
-        self.status_var = tk.StringVar()
-        self.status_var.set("")
-        status_label = ct.CTkLabel(self, textvariable=self.status_var)
-        status_label.pack(pady=80)
+        self.upload_process = multiprocessing.Process(target=run_script)
+        self.upload_process.start()
+        print(self.upload_process.is_alive())
+        with open('pid_file.txt', 'w') as f:
+            f.write(str(self.upload_process.pid))
+
+        self.database = db_manager.DBManager()
+
+        # self.status_var = tk.StringVar()
+        # self.status_var.set("")
+        # status_label = ct.CTkLabel(self, textvariable=self.status_var)
+        # status_label.pack(pady=80)
 
         # self.update_label()
 
@@ -109,6 +122,7 @@ class App(ct.CTk):
 
         # Creates additional pages that could be called by app and withdraw them
         try:
+            self.settings_sync = self.create_additional_pages()
             self.settings = self.create_additional_pages()
             self.settings_2 = self.create_additional_pages()
             self.settings_2_1 = self.create_additional_pages()
@@ -118,6 +132,18 @@ class App(ct.CTk):
             aeya_logger.error(f"{e}")
 
         # Configure additional pages
+        # Setting Sync settings
+        try:
+            action_list_sync = [lambda: Settings_processor.save_settings(self.parameters, self.settings,
+                                                                      self.settings_2, self.settings_3)]
+            self.widges_dict_settings_sync = self.configure_additional_page(
+                page=self.settings_sync,
+                button_widgets=SyncWidgets.button_widgets,
+                action_list=action_list_sync,
+                label_widgets=SyncWidgets.label_widgets,
+                entry_widgets=SyncWidgets.entry_widgets)
+        except Exception as e:
+            aeya_logger.error(f"{e}")
         # Setting 1 window parameters
         try:
             action_list_1 = [lambda: Settings_processor.save_settings(
@@ -204,7 +230,7 @@ class App(ct.CTk):
                 self.label_device = ct.CTkLabel(self, text=CodeValues.GUITexts.SPOT.value)
             if self.parameters[CodeValues.ParameterNames.DEVICE.value].get() == CodeValues.Device.GRACIA.value:
                 self.label_device = ct.CTkLabel(self, text=CodeValues.GUITexts.GRACIA.value)
-            self.label_device.place(relx=0.75, rely=0.09)
+            self.label_device.place(relx=0.85, rely=0.05)
             aeya_logger.debug("Device label initialized.")
         except Exception as e:
             aeya_logger.error(f"{e}")
@@ -213,37 +239,44 @@ class App(ct.CTk):
         try:
             self.device_status_default = CodeValues.GUITexts.NOT_CONNECTED.value
             self.device_status_label = ct.CTkLabel(self, text=self.device_status_default)
-            self.device_status_label.place(relx=0.75, rely=0.04)
+            self.device_status_label.place(relx=0.85, rely=0.01)
             aeya_logger.debug("Connection label initialized.")
         except Exception as e:
             aeya_logger.error(f"{e}")
+
+        # Initialize queue status
+        self.num_files_var = tk.StringVar()
+        num_files_label = ct.CTkLabel(self, textvariable=self.num_files_var)
+        num_files_label.place(relx=0.85, rely=0.09)
+        t = threading.Thread(target=self.update_label)
+        t.start()
         # Main window buttons
         try:
             # Start stream button
             self.start_stream_btn = self.create_button_widget(
                 text_value=CodeValues.GUITexts.START_TRANSLATION_BUTTON.value,
                 command=self.start_stream,
-                relx=0.025, rely=0.05, parent=self)
+                relx=0.04, rely=0.05, parent=self)
 
             # Soft trigger button
             self.soft_trigger_btn = self.create_button_widget(text_value=CodeValues.GUITexts.TRIGGER_BUTTON.value,
                                                               command=self.temp_soft,
-                                                              relx=0.025, rely=0.9, parent=self)
+                                                              relx=0.04, rely=0.9, parent=self)
 
             # Folder button
             self.folder_btn = self.create_button_widget(text_value=CodeValues.GUITexts.FOLDER_BUTTON.value,
                                                         command=lambda: webbrowser.open(os.path.realpath("./images/")),
-                                                        relx=0.275, rely=0.9, parent=self)
+                                                        relx=0.165, rely=0.9, parent=self)
 
             # Settings button
             self.folder_btn = self.create_button_widget(text_value=CodeValues.GUITexts.SETTINGS_BUTTON.value,
                                                         command=self.show_settings,
-                                                        relx=0.775, rely=0.9, parent=self)
+                                                        relx=0.85, rely=0.9, parent=self)
 
             # Sync button
             self.folder_btn = self.create_button_widget(text_value=CodeValues.GUITexts.SYNC_BUTTON.value,
-                                                        command=self.show_settings,
-                                                        relx=0.525, rely=0.9, parent=self)
+                                                        command=self.show_sync_settings,
+                                                        relx=0.725, rely=0.9, parent=self)
             aeya_logger.debug("Main page buttons initialized.")
         except Exception as e:
             aeya_logger.error(f"{e}")
@@ -253,9 +286,9 @@ class App(ct.CTk):
             self.PETRI_CODE.trace('w', self.input_change_reaction)
 
             self.code_label = ct.CTkLabel(self, text=CodeValues.GUITexts.CODE_LABEL.value)
-            self.code_label.place(relx=0.35, rely=0.05)
+            self.code_label.place(relx=0.42, rely=0.05)
             self.input_field = ct.CTkEntry(self, textvariable=self.PETRI_CODE)
-            self.input_field.place(relx=0.4, rely=0.05)
+            self.input_field.place(relx=0.45, rely=0.05)
             aeya_logger.debug("Input field initialized.")
         except Exception as e:
             aeya_logger.error(f"{e}")
@@ -263,14 +296,14 @@ class App(ct.CTk):
         # Initiate image frames widgets
         try:
             self.frame_0 = self.create_frame_widget(self, 50, 120)
-            self.frame_1 = self.create_frame_widget(self, 355, 120)
+            self.frame_1 = self.create_frame_widget(self, 730, 120)
 
             self.image_label_0 = None
             self.image_label_1 = None
 
-            self.label_i_0 = ct.CTkLabel(self.frame_0, text="", width=290, height=290)
+            self.label_i_0 = ct.CTkLabel(self.frame_0, text="", width=490, height=490)
             self.label_i_0.place(x=5, y=5)
-            self.label_i_1 = ct.CTkLabel(self.frame_1, text="", width=290, height=290)
+            self.label_i_1 = ct.CTkLabel(self.frame_1, text="", width=490, height=490)
             self.label_i_1.place(x=5, y=5)
             aeya_logger.debug("Image frames initialized.")
         except Exception as e:
@@ -327,6 +360,19 @@ class App(ct.CTk):
     #     except:
     #         pass
     #     self.after(5000, self.update_label)  # Check queue every second
+
+    def update_label(self):
+        # Get a list of all files in the directory
+        files = os.listdir("./dumps")
+
+        # Filter the list to only include JSON files
+        json_files = [f for f in files if f.endswith('.json')]
+
+        # Update the StringVar with the number of JSON files
+        self.num_files_var.set(f'Очередь загрузки: {len(json_files)}')
+
+        # Schedule the function to run again after 5000ms (5 seconds)
+        self.after(5000, self.update_label)
 
 
     def create_additional_pages(self):
@@ -451,6 +497,14 @@ class App(ct.CTk):
         except Exception as e:
             aeya_logger.error(e)
 
+    def show_sync_settings(self):
+        try:
+            self.settings_sync.protocol("WM_DELETE_WINDOW", self.settings_sync.withdraw)
+            self.settings_sync.deiconify()
+            aeya_logger.debug("Exposure settings page opened.")
+        except Exception as e:
+            aeya_logger.error(e)
+
     def show_settings(self):
         try:
             self.settings.protocol("WM_DELETE_WINDOW", self.settings.withdraw)
@@ -556,14 +610,17 @@ class App(ct.CTk):
         except Exception as e:
             aeya_logger.error(e)
 
-    def image_setter(self, selector, image, mask):
+    def image_setter(self, selector, image, mask, masking=False):
         try:
-            image = countoring.applying_mask(image, mask)
+            if masking:
+                image = countoring.applying_mask(image, mask)
+            else:
+                pass
 
             image = Image.fromarray(image, 'RGB')
             image_resized = ct.CTkImage(light_image=image,
                                         dark_image=image,
-                                        size=(290, 290))
+                                        size=(490, 490))
             if selector == CodeValues.Modes.B.value:
                 self.label_i_0 = ct.CTkLabel(self.frame_0, text="", width=290, height=290, image=image_resized)
                 self.label_i_0.image = image_resized
@@ -750,10 +807,14 @@ class App(ct.CTk):
                     if self.parameters_dict[CodeValues.ParameterNames.DEVICE.value] == CodeValues.Device.SPOT.value:
                         self.PETRI_CODE.set("")
 
-                    self.sender.save_json_locally(self.http_client.requester())
+                    self.database.add_db_item(json_dict=self.http_client.requester(),
+                                               research=self.parameters[CodeValues.ParameterNames.DEVICE.value].get()
+                                               )
                     self.http_client.reset()
 
                     image_odd = "B"
+
+                    self.database.load_db_items()
 
     def input_change_reaction(self, *args):
         self.input_field.configure(fg_color="#343638")
@@ -842,7 +903,5 @@ class App(ct.CTk):
             self.image_setter("B", img_for_tk["B"], mask=img_for_tk["Mask"])
             self.image_setter("P", img_for_tk["P"], mask=img_for_tk["Mask"])
 if __name__ == "__main__":
-    # Pyinstaller fix
-    freeze_support()
     gui = App()
     gui.run_app()

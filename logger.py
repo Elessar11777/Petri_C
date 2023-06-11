@@ -15,7 +15,7 @@ def setup_logger():
     if not os.path.exists('logs'):
         os.mkdir('logs')
     f_handler = logging.FileHandler(f"./logs/logs_{today}.log")
-    c_handler.setLevel(logging.INFO)
+    c_handler.setLevel(logging.DEBUG)
     f_handler.setLevel(logging.DEBUG)
 
     # Create formatters and add it to handlers

@@ -22,13 +22,13 @@ class GUI(Enum):
     THEME = "dark-blue"
     TITLE = "Aeya"
     SETTINGS_TITLE = "Aeya Настройки"
-    GEOMETRY = "700x500"
+    GEOMETRY = "1280x720"
 
     IMAGE_FRAME_FOREGROUND = 'gray'
     IMAGE_FRAME_BORDER = "black"
     BORDER_WIDTH = 5
-    WIDTH = 300
-    HEIGHT = 300
+    WIDTH = 500
+    HEIGHT = 500
     # Input field status
     GREEN = "green"
     YELLOW = "yellow"
@@ -136,6 +136,15 @@ class ParameterNames(Enum):
     LOCAL_GAMMA = "local_gamma"
     BATCH_SIZE = "batch_size"
 
+    AEYA_SERVER_URL = "aeya_server_url"
+    WEB_SERVER_URL = "web_server_url"
+    ML_SERVER_URL = "ml_server_url"
+    AEYA_SERVER_PORT = "aeya_server_port"
+    WEB_SERVER_PORT = "web_server_port"
+    ML_SERVER_PORT = "ml_server_port"
+
+
+
 
 
 class Parameters():
@@ -163,5 +172,11 @@ class Parameters():
             "HDR_pixels": 150,
             "local_saturation": 1,
             "local_gamma": 2.2,
-            "batch_size": 24
+            "batch_size": 24,
+            "aeya_server_url": "http://194.186.150.221/",
+            "web_server_url": "http://194.186.150.221/",
+            "ml_server_url": "http://194.186.150.221/",
+            "aeya_server_port": "1515",
+            "web_server_port": "",
+            "ml_server_port": "",
         }

@@ -60,7 +60,7 @@ class HTTPRequester:
                 }
 
             },
-            "Root": self.root,
+            "Root": "",
             "Meta": {
                 "Date": "",
                 "Time": "",
@@ -138,7 +138,7 @@ class HTTPRequester:
             print(match)
             if match:
                 self.images["Meta"]["Bacteria"] = match.group(1).lower()
-                self.images["Meta"]["Code"] = match.group(2) + "-" + (match.group(4) if match.group(4) else '')
+                self.images["Meta"]["Code"] = match.group(2) + ("-" + match.group(4) if match.group(4) else '')
                 self.images["Meta"]["Dilution"] = match.group(5)
         if self.research == "spot":
             pattern = r'^([a-zA-Z]{3})[ _-]?(\d{1,4})[ _-](\d{1,3})$'
@@ -172,7 +172,7 @@ class HTTPRequester:
         return returning_dict
 
 
-    def short_requester_production(self, response, production=False):
+    def short_requester_production(self, original, response, production=False):
         short_dict = {
             "Links": {
                 "B": response["Links"]["B"],
@@ -180,19 +180,19 @@ class HTTPRequester:
                 "Mask": response["Links"]["Mask"]
             },
             "Meta": {
-                "Date": self.images["Meta"]["Date"],
-                "Time": self.images["Meta"]["Time"],
-                "Research": self.images["Meta"]["Research"],
-                "Bacteria": self.images["Meta"]["Bacteria"],
-                "Code": self.images["Meta"]["Code"],
+                "Date": original["Meta"]["Date"],
+                "Time": original["Meta"]["Time"],
+                "Research": original["Meta"]["Research"],
+                "Bacteria": original["Meta"]["Bacteria"],
+                "Code": original["Meta"]["Code"],
                 # "Dilution": "",
                 # "Cell": ""
            },
         }
-        if "Dilution" in self.images["Meta"]:
-            short_dict["Meta"]["Dilution"] = self.images["Meta"]["Dilution"]
-        if "Cell" in self.images["Meta"]:
-            short_dict["Meta"]["Cell"] = self.images["Meta"]["Cell"]
+        if "Dilution" in original["Meta"]:
+            short_dict["Meta"]["Dilution"] = original["Meta"]["Dilution"]
+        if "Cell" in original["Meta"]:
+            short_dict["Meta"]["Cell"] = original["Meta"]["Cell"]
 
         if production:
             json_data = json.dumps(short_dict, indent=4)
