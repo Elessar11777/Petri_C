@@ -167,7 +167,8 @@ class App(ct.CTk):
                               b_num=int(self.parameters[CodeValues.ParameterNames.EXPOSURE_BOTTOM_NUM_CALIBRATION.value].get()),
                               p_low=int(self.parameters[CodeValues.ParameterNames.EXPOSURE_PERIF_MIN.value].get()),
                               p_high=int(self.parameters[CodeValues.ParameterNames.EXPOSURE_PERIF_MAX.value].get()),
-                              p_num=int(self.parameters[CodeValues.ParameterNames.EXPOSURE_PERIF_NUM_CALIBRATION.value].get())
+                              p_num=int(self.parameters[CodeValues.ParameterNames.EXPOSURE_PERIF_NUM_CALIBRATION.value].get()),
+                              selector="B"
                               ),
                              lambda: self.calibration_thread(
                                  b_low=int(self.parameters[CodeValues.ParameterNames.EXPOSURE_BOTTOM_MIN.value].get()),
@@ -177,7 +178,8 @@ class App(ct.CTk):
                                  p_low=int(self.parameters[CodeValues.ParameterNames.EXPOSURE_PERIF_MIN.value].get()),
                                  p_high=int(self.parameters[CodeValues.ParameterNames.EXPOSURE_PERIF_MAX.value].get()),
                                  p_num=int(self.parameters[
-                                               CodeValues.ParameterNames.EXPOSURE_PERIF_NUM_CALIBRATION.value].get())
+                                               CodeValues.ParameterNames.EXPOSURE_PERIF_NUM_CALIBRATION.value].get()),
+                                 selector="P"
                              )
                              ]
             self.widges_dict_settings_1 = self.configure_additional_page(page=self.settings, action_list=action_list_1)
@@ -677,10 +679,10 @@ class App(ct.CTk):
         except Exception as e:
             aeya_logger.error(e)
 
-    def calibration_thread(self, b_low, b_high, b_num, p_low, p_high, p_num):
+    def calibration_thread(self, b_low, b_high, b_num, p_low, p_high, p_num, selector):
         try:
             calibration = threading.Thread(target=self.global_calibration,
-                                           args=(b_low, b_high, b_num, p_low, p_high, p_num),
+                                           args=(selector, b_low, b_high, b_num, p_low, p_high, p_num),
                                            daemon=True)
             calibration.start()
         except Exception as e:
@@ -844,13 +846,13 @@ class App(ct.CTk):
         self.input_field.configure(fg_color="#343638")
         self.input_field.configure(text_color="white")
 
-    def global_calibration(self,
+    def global_calibration(self, selector,
                            b_low=10000, b_high=900000, b_num=100,
                            p_low=10000, p_high=900000, p_num=100):
         aeya_logger.info("Starting global calibration")
 
-        b_step = int((b_high - b_low) / b_num)
-        p_step = int((p_high - p_low) / p_num)
+        b_step = int((b_high - b_low) / int(b_num))
+        p_step = int((p_high - p_low) / int(p_num))
 
         exposures_dict = {
             "B": [x for x in range(b_low, b_high, b_step)],
@@ -887,7 +889,7 @@ class App(ct.CTk):
 
         CRF = HDR_CRF.CRF_calculate(result_aligning)
 
-        ie.CRF_JSON_exporter(CRF)
+        ie.CRF_JSON_exporter(CRF, selector)
 
     def image_transform(self, client, mode):
         aeya_logger.info(f"Call image_transform with mode: {mode}")

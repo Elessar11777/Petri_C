@@ -52,7 +52,10 @@ def save_settings(settings_dict, settings1, settings2, settings3):
         "gmic": settings_dict["gmic"].get(),
         "gmic_check": settings_dict["gmic_check"].get(),
         "root": settings_dict["root"].get(),
-        "compression": settings_dict["compression"].get()
+        "compression": settings_dict["compression"].get(),
+        "gracia_string_rule": settings_dict["gracia_string_rule"].get(),
+        "spot_string_rule": settings_dict["spot_string_rule"].get()
+
     }
 
     with open('./images/configs/settings.json', 'w') as outfile:

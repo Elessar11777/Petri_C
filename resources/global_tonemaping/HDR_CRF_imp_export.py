@@ -10,17 +10,22 @@ PATH_DICT = {
         "P": CRF_P_PATH
     }
 
-def CRF_JSON_exporter(crf_dict):
-    if os.path.exists(PATH_DICT["B"]):
-        os.remove(PATH_DICT["B"])
-    if os.path.exists(PATH_DICT["P"]):
-        os.remove(PATH_DICT["P"])
+def CRF_JSON_exporter(crf_dict, selector):
+    if selector == "B":
+        if os.path.exists(PATH_DICT["B"]):
+            os.remove(PATH_DICT["B"])
+    if selector == "P":
+        if os.path.exists(PATH_DICT["P"]):
+            os.remove(PATH_DICT["P"])
 
 
     for light, crf in crf_dict.items():
-        with open(PATH_DICT[light], "wb") as f:
-            numpy.save(f, crf)
-        aeya_logger.info(f"CRF exported in {PATH_DICT[light]}")
+        if light == selector:
+            with open(PATH_DICT[light], "wb") as f:
+                numpy.save(f, crf)
+            aeya_logger.info(f"CRF exported in {PATH_DICT[light]}")
+        else:
+            pass
 
 def CRF_JSON_importer():
     crf_dict = {

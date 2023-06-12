@@ -11,6 +11,7 @@ from logger import aeya_logger
 import io
 from PIL import Image
 import copy
+import numpy as np
 from resources.Values import CodeValues
 
 class HTTPRequester:
@@ -95,6 +96,7 @@ class HTTPRequester:
 
     def image_to_base64_and_hash(self, image, image_set, light, exposition=None, compression=2):
         # Source image coming here is RGB
+        image = np.flipud(image)
         image_pil = Image.fromarray(image)
         buffer = io.BytesIO()
         image_pil.save(buffer, format="PNG", compress_level=int(compression))

@@ -187,7 +187,7 @@ class Parameters():
             "aeya_server_port": "1515",
             "web_server_port": "",
             "ml_server_port": "",
-            "gmic": "rotate 90 mirror x -fx_unsharp 1,10,20,2,0,2,1,1,0,0",
+            "gmic": "rotate 90 -fx_unsharp 1,10,20,2,0,2,1,1,0,0",
             "gmic_check": "on",
             "root": "/srv/filehosting/aeya_uploads/",
             "compression": 2,
