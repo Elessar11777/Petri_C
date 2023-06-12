@@ -6,6 +6,8 @@ import db_manager
 import threading
 import requests
 import json
+from resources.Values import CodeValues
+import Settings_processor
 
 
 class JsonSender():
@@ -15,9 +17,24 @@ class JsonSender():
         self.queue = queue.Queue()
         self.db = db_manager.DBManager()
         self.db.create_db()
-
         self.keep_running = True
 
+        self.parameters = Settings_processor.load_parameters_from_file("./images/configs/settings.json")
+        print(self.parameters["aeya_server_url"])
+        if self.parameters["aeya_server_port"] != "":
+            self.url = self.parameters["aeya_server_url"] + ":" + self.parameters["aeya_server_port"]
+        else:
+            self.url = self.parameters["aeya_server_url"]
+
+        if self.parameters["web_server_port"] != "":
+            self.web_url = self.parameters["web_server_url"] + ":" + self.parameters["web_server_port"]
+        else:
+            self.web_url = self.parameters["web_server_url"]
+
+        if self.parameters["ml_server_port"] != "":
+            self.ml_url = self.parameters["ml_server_url"] + ":" + self.parameters["ml_server_port"]
+        else:
+            self.ml_url = self.parameters["ml_server_url"]
     def run(self):
         aeya_logger.debug("started run")
         try:
@@ -57,13 +74,13 @@ class JsonSender():
         headers = {'Content-Type': 'application/json'}
         try:
             print("Tying sending")
-            response = requests.post("http://194.186.150.221:1515/upload/", json=data, headers=headers, timeout=300)
+            print(data["Meta"])
+            response = requests.post(f"http://{self.url}/upload/", json=data, headers=headers, timeout=300)
             if response.status_code == 200:
                 aeya_logger.info("Success")
                 response_json = response.json()
                 print(response_json)
                 self.short_requester_production(data, response_json)
-
         except requests.exceptions.RequestException as e:
             aeya_logger.error(f"RequestException: {e}")
         except Exception as e:
@@ -112,7 +129,7 @@ class JsonSender():
             headers = {'Content-Type': 'application/json'}
             aeya_logger.info(f"Json to microgen test: {json_data}")
             try:
-                response = requests.get("http://microgen.up6.ru/qcapi/research_upload", data=json_data, headers=headers)
+                response = requests.get(f"http://{self.web_url}", data=json_data, headers=headers)
                 response.raise_for_status()
             except requests.exceptions.HTTPError as err:
                 aeya_logger.error(f"HTTP error occurred: {err}")

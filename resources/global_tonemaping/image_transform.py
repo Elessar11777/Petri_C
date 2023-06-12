@@ -16,7 +16,7 @@ def global_image_transformer(BP_images_dict, selector, gb, sb, gp, sp, sharpenin
     result_merging = HDR_Merging.merging(exp_img_dict=result_aligning, crf_dict=crf_dict)
 
     for light, image in result_merging.items():
-        result_merging[light] = cv2.flip(image, 0)
+        result_merging[light] = image
 
     result_tonemaping = HDR_Tonemaping.tonemaping(hdr_dict=result_merging,
                                                   gb=float(gb),

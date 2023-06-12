@@ -42,7 +42,17 @@ def save_settings(settings_dict, settings1, settings2, settings3):
         "HDR_pixels": settings_dict["HDR_pixels"].get(),
         "local_saturation": settings_dict["local_saturation"].get(),
         "local_gamma": settings_dict["local_gamma"].get(),
-        "batch_size": settings_dict["batch_size"].get()
+        "batch_size": settings_dict["batch_size"].get(),
+        "aeya_server_url": settings_dict["aeya_server_url"].get(),
+        "web_server_url": settings_dict["web_server_url"].get(),
+        "ml_server_url": settings_dict["ml_server_url"].get(),
+        "aeya_server_port": settings_dict["aeya_server_port"].get(),
+        "web_server_port": settings_dict["web_server_port"].get(),
+        "ml_server_port": settings_dict["ml_server_port"].get(),
+        "gmic": settings_dict["gmic"].get(),
+        "gmic_check": settings_dict["gmic_check"].get(),
+        "root": settings_dict["root"].get(),
+        "compression": settings_dict["compression"].get()
     }
 
     with open('./images/configs/settings.json', 'w') as outfile:

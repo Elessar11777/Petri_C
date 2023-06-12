@@ -11,17 +11,18 @@ from logger import aeya_logger
 import io
 from PIL import Image
 import copy
+from resources.Values import CodeValues
 
 class HTTPRequester:
-    def __init__(self, url="http://194.186.150.221", data_port="1515", production_port="1516", ml_port="1517",
-                 research="gracia", gmic_request="mirror y -fx_unsharp 1,10,20,2,0,2,1,1,0,0", root="/srv/filehosting/aeya_uploads/"):
-        self.url = url
-        self.data_url = f"{self.url}:{data_port}"
-        self.production_url = f"{self.url}:{production_port}"
-        self.ml_url = f"{self.url}:{ml_port}"
+    def __init__(self, parameters_dict, research="gracia", gmic_request="mirror y -fx_unsharp 1,10,20,2,0,2,1,1,0,0", gmic_check="on",
+                 root="/srv/filehosting/aeya_uploads/"):
+
+        self.parameters = parameters_dict
+
         self.research = research.lower()
         self.gmic_request = gmic_request
         self.root = root
+        self.gmic_check = gmic_check
         self.images_template = {
             "Images": {
                         "B": "",
@@ -37,6 +38,7 @@ class HTTPRequester:
                 "P": {}
             },
             "Gmic": "",
+            "Gmic_check": "",
             "Hash": {
                 "Images": {
                     "B": "image_string",
@@ -83,6 +85,7 @@ class HTTPRequester:
 
         self.images["Gmic"] = self.gmic_request
         self.images["Root"] = self.root
+        self.images["Gmic_check"] = self.gmic_check
 
     def set_dtime(self):
         self.images["Meta"]["Date"] = date.today().strftime("%d_%m_%Y")
@@ -90,10 +93,11 @@ class HTTPRequester:
         aeya_logger.debug(f"Meta: {self.images['Meta']}")
 
 
-    def image_to_base64_and_hash(self, image, image_set, light, exposition=None):
+    def image_to_base64_and_hash(self, image, image_set, light, exposition=None, compression=2):
+        # Source image coming here is RGB
         image_pil = Image.fromarray(image)
         buffer = io.BytesIO()
-        image_pil.save(buffer, format="PNG", compress_level=2)
+        image_pil.save(buffer, format="PNG", compress_level=int(compression))
         byte_image = buffer.getvalue()
         # byte_image = image.tobytes()
         b64_image = base64.b64encode(byte_image)
@@ -102,48 +106,44 @@ class HTTPRequester:
         hash_object = hashlib.sha256(byte_image)
         hash_value = hash_object.hexdigest()
 
+        # This way of source images
         if exposition is not None:
             self.images["Transport_Source"][light][exposition] = string_image
             self.images["Hash"][image_set][light][exposition] = hash_value
             self.images["Source"][light][exposition] = image
             # print(f"{image} added to {self.images['Source'][light][exposition]}")
-
+        #That way of result images
         else:
             self.images[image_set][light] = string_image
             self.images["Hash"][image_set][light] = hash_value
 
-    def source_images_filler(self, image, exposition, light):
-        self.image_to_base64_and_hash(image, "Source", light, exposition)
+    def source_images_filler(self, image, exposition, light, compression=2):
+        self.image_to_base64_and_hash(image, "Source", light, exposition, compression=compression)
 
-    def result_image_filler(self, images_dict, method="global"):
+    def result_image_filler(self, images_dict, compression=2):
         result_images = {}
         result_images["Mask"] = images_dict["Mask"]
         for light, image in images_dict.items():
-            self.image_to_base64_and_hash(image, "Images", light)
-        if method == "local":
-            for light, image in images_dict.items():
-                if image.shape == (2064, 2064, 3):
-                    result_images[light] = image
-        elif method == "global":
-            for light, image in images_dict.items():
-                result_images[light] = image
+            self.image_to_base64_and_hash(image, "Images", light, compression=compression)
+            result_images[light] = image
         return result_images
 
 
     def string_interpreter(self, string=''):
         print(string)
         if self.research == "gracia":
-            pattern = r'^([a-zA-Z]{3})[ _-]?(\d{1,4})([ _-]?(\d{0,2}))?[ _-](\d{1,2})$'
+            pattern = rf'{self.parameters["gracia_string_rule"].get()}'
             match = re.search(pattern, string)
-            print(match)
+            print(f"Gracia pattern {pattern}")
+            print(f"Gracia match {match}")
             if match:
                 self.images["Meta"]["Bacteria"] = match.group(1).lower()
                 self.images["Meta"]["Code"] = match.group(2) + ("-" + match.group(4) if match.group(4) else '')
                 self.images["Meta"]["Dilution"] = match.group(5)
         if self.research == "spot":
-            pattern = r'^([a-zA-Z]{3})[ _-]?(\d{1,4})[ _-](\d{1,3})$'
+            pattern = rf'{self.parameters["spot_string_rule"].get()}'
             match = re.search(pattern, string)
-            print(match)
+            print(f"Spot match {match}")
             if match:
                 self.images["Meta"]["Bacteria"] = match.group(1).lower()
                 self.images["Meta"]["Code"] = match.group(2)
@@ -169,6 +169,7 @@ class HTTPRequester:
     def requester(self):
         returning_dict = self.images.copy()
         del returning_dict["Source"]
+        print(returning_dict["Gmic"])
         return returning_dict
 
 
@@ -215,6 +216,16 @@ class HTTPRequester:
 
     def reset(self):
         self.images = copy.deepcopy(self.images_template)
+        if self.research == "gracia":
+            self.images["Meta"]["Research"] = "gracia"
+            self.images["Root"] = "./gracia"
+        if self.research == "spot":
+            self.images["Meta"]["Research"] = "spot"
+            self.images["Root"] = "./spot"
+
+        self.images["Gmic"] = self.gmic_request
+        self.images["Root"] = self.root
+        self.images["Gmic_check"] = self.gmic_check
 
 #
 # if __name__ == '__main__':

@@ -143,6 +143,14 @@ class ParameterNames(Enum):
     WEB_SERVER_PORT = "web_server_port"
     ML_SERVER_PORT = "ml_server_port"
 
+    GMIC = "gmic"
+    GMIC_CHECK = "gmic_check"
+    ROOT = "root"
+    COMPRESSION = "compression"
+
+    GRACIA_RULE = "gracia_string_rule"
+    SPOT_RULE = "spot_string_rule"
+
 
 
 
@@ -173,10 +181,16 @@ class Parameters():
             "local_saturation": 1,
             "local_gamma": 2.2,
             "batch_size": 24,
-            "aeya_server_url": "http://194.186.150.221/",
-            "web_server_url": "http://194.186.150.221/",
-            "ml_server_url": "http://194.186.150.221/",
+            "aeya_server_url": "194.186.150.221",
+            "web_server_url": "microgen.up6.ru/qcapi/research_upload",
+            "ml_server_url": "194.186.150.221",
             "aeya_server_port": "1515",
             "web_server_port": "",
             "ml_server_port": "",
+            "gmic": "rotate 90 mirror x -fx_unsharp 1,10,20,2,0,2,1,1,0,0",
+            "gmic_check": "on",
+            "root": "/srv/filehosting/aeya_uploads/",
+            "compression": 2,
+            "gracia_string_rule": "^([a-zA-Z]{3})[ _-]?(\d{1,4})([ _-]?(\d{0,2}))?[ _-](\d{1,2})$",
+            "spot_string_rule": "^([a-zA-Z]{3})[ _-]?(\d{1,4})[ _-](\d{1,3})$"
         }

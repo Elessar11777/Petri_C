@@ -42,6 +42,8 @@ def tonemaping(hdr_dict, gb=1.4, sb=2.0, gp=1.6, sp=1.6):
     for light, hdr_image in hdr_dict.items():
         tonemapped = cv2.createTonemapDrago(gamma=parameters_dict[light]["gamma"],
                                             saturation=parameters_dict[light]["saturation"])
+        aeya_logger.debug(type(hdr_image))
+        aeya_logger.debug(hdr_image)
         ldrDrago = tonemapped.process(hdr_image)
         ldrDrago = 3 * ldrDrago
         # TODO Check source of NaN value pixels

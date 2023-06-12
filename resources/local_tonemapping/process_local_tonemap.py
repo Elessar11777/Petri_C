@@ -13,7 +13,7 @@ def process_local_tonemap(irradiance_map_dict, saturation=1., gamma=1 / 2.2, num
         # compute tonemapped image
         tonemapped_bgr = local_tonemap(irradiance_map, saturation=saturation, gamma_=gamma, numtiles=numtiles)
         # image = tonemapped_bgr[:, :, [2, 1, 0]]
-        result_dict[selector] = cv2.flip(tonemapped_bgr, 0)
+        result_dict[selector] = tonemapped_bgr
 
 
     return result_dict

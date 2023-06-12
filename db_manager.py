@@ -133,6 +133,18 @@ class DBManager:
         conn.commit()
         conn.close()
 
+    def set_status_not_found(self, id):
+        # Setup sqlite connection
+        conn = sqlite3.connect(self.db_path)
+        cursor = conn.cursor()
+
+        # Execute a query to update status to 'not found' for the specified id
+        cursor.execute(f"UPDATE {self.table_name} SET status = 'not found' WHERE id = ?;", (id,))
+
+        # Commit changes and close connection
+        conn.commit()
+        conn.close()
+
     def reset_db(self):
         # Setup sqlite connection
         conn = sqlite3.connect(self.db_path)

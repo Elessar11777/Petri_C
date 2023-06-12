@@ -12,6 +12,8 @@ import gxipy as gx
 import cv2
 import subprocess
 import multiprocessing
+import ping3
+import time
 
 import uploader
 # Default parameters:
@@ -131,6 +133,12 @@ class App(ct.CTk):
         except Exception as e:
             aeya_logger.error(f"{e}")
 
+        # Additional non-base pages' items
+
+        # self.gmic_check_var = ct.StringVar(value="on")
+        self.gmic_checkbox = ct.CTkCheckBox(self.settings_sync, text="Использовать обработчкик GMIC",
+                                             variable=self.parameters["gmic_check"], onvalue="on", offvalue="off")
+        self.gmic_checkbox.place(relx=0.37, rely=0.29)
         # Configure additional pages
         # Setting Sync settings
         try:
@@ -246,10 +254,11 @@ class App(ct.CTk):
 
         # Initialize queue status
         self.num_files_var = tk.StringVar()
-        num_files_label = ct.CTkLabel(self, textvariable=self.num_files_var)
-        num_files_label.place(relx=0.85, rely=0.09)
+        self.num_files_label = ct.CTkLabel(self, textvariable=self.num_files_var)
+        self.num_files_label.place(relx=0.85, rely=0.09)
         t = threading.Thread(target=self.update_label)
         t.start()
+        threading.Thread(target=self.ping_server, daemon=True).start()
         # Main window buttons
         try:
             # Start stream button
@@ -351,15 +360,23 @@ class App(ct.CTk):
             if settings_window.state() != "withdrawn":
                 settings_window.withdraw()
 
-    # def update_label(self):
-    #     try:
-    #         status = self.status_queue.get_nowait()
-    #         status_str = f"Очередь: {status['queue']}\n{status['uploading']}"
-    #         print(status_str)
-    #         self.status_var.set(status_str)
-    #     except:
-    #         pass
-    #     self.after(5000, self.update_label)  # Check queue every second
+    def ping_server(self):
+        while True:
+            try:
+                # Ping a server (change "194.186.150.221" to the IP address you want to ping)
+                delay = ping3.ping("194.186.150.221")
+                if delay is None:
+                    # Ping was unsuccessful, set the indicator to red
+                    self.num_files_label.configure(text_color="red")
+                else:
+                    # Ping was successful, set the indicator to green
+                    self.num_files_label.configure(text_color="green")
+            except Exception as e:
+                print(f"Exception occurred: {e}")
+                self.num_files_label.configure(text_color="red")
+
+            # Wait for one second before pinging again
+            time.sleep(1)
 
     def update_label(self):
         # Get a list of all files in the directory
@@ -729,7 +746,8 @@ class App(ct.CTk):
         for exp, img in client.images["Source"][selector].items():
             rgb_image = img.convert("RGB")
             numpy_image = rgb_image.get_numpy_array()
-            client.source_images_filler(image=numpy_image, exposition=exp, light=selector)
+            client.source_images_filler(image=numpy_image, exposition=exp, light=selector,
+                                        compression=self.parameters[CodeValues.ParameterNames.COMPRESSION.value].get())
     def camera_reset(self):
         try:
             self.cam.stream_off()
@@ -742,7 +760,13 @@ class App(ct.CTk):
         aeya_logger.info("Camera main loop starting...")
         CameraParameters.set_parameters(self.cam)
         self.set_exposures()
-        self.http_client = client.HTTPRequester(research=self.parameters[CodeValues.ParameterNames.DEVICE.value].get())
+        self.http_client = client.HTTPRequester(
+            research=self.parameters[CodeValues.ParameterNames.DEVICE.value].get(),
+            gmic_request=self.parameters[CodeValues.ParameterNames.GMIC.value].get(),
+            gmic_check=self.parameters[CodeValues.ParameterNames.GMIC_CHECK.value].get(),
+            root=self.parameters[CodeValues.ParameterNames.ROOT.value].get(),
+            parameters_dict=self.parameters
+            )
         image_odd = "B"
         while self.FLAG == 1:
             if self.soft_trigger == 1:
@@ -880,8 +904,8 @@ class App(ct.CTk):
                 sharpening_s=self.parameters[CodeValues.ParameterNames.SHARPENING_S.value].get(),
                 sharpening_r=self.parameters[CodeValues.ParameterNames.SHARPENING_R.value].get())
 
-            result["Mask"] = cv2.flip(mask, 0)
-            img_for_tk = client.result_image_filler(result, method="global")
+            result["Mask"] = mask
+            img_for_tk = client.result_image_filler(result, compression=self.parameters[CodeValues.ParameterNames.COMPRESSION.value].get())
             self.image_setter("B", img_for_tk["B"], mask=img_for_tk["Mask"])
             self.image_setter("P", img_for_tk["P"], mask=img_for_tk["Mask"])
 
@@ -898,8 +922,8 @@ class App(ct.CTk):
                 gamma=float(self.parameters[CodeValues.ParameterNames.LOCAL_GAMMA.value].get()),
                 numtiles=tuple([int(self.parameters[CodeValues.ParameterNames.BATCH_SIZE.value].get()),
                                 int(self.parameters[CodeValues.ParameterNames.BATCH_SIZE.value].get())]))
-            result_dict["Mask"] = cv2.flip(mask, 0)
-            img_for_tk = client.result_image_filler(result_dict, method="local")
+            result_dict["Mask"] = mask
+            img_for_tk = client.result_image_filler(result_dict, compression=self.parameters[CodeValues.ParameterNames.COMPRESSION.value].get())
             self.image_setter("B", img_for_tk["B"], mask=img_for_tk["Mask"])
             self.image_setter("P", img_for_tk["P"], mask=img_for_tk["Mask"])
 if __name__ == "__main__":
