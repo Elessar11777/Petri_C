@@ -1,0 +1,274 @@
+{
+  "_comment": {
+    "param": "Name to refer on working config dictionary. Should be string.",
+    "values": "Default value for working config dictionary. Should be string.",
+    "keys": "Key:value pairs for hardcode values. Should be dict."
+  },
+  "Device": {
+    "param": "device",
+    "values": "spot",
+    "keys": {
+      "SPOT": "spot",
+      "GRACIA": "gracia"
+    }
+  },
+  "Mode": {
+    "param": null,
+    "values": null,
+    "keys": {
+      "B": "B",
+      "P": "P"
+    }
+  },
+  "ProcessingMode": {
+    "param": "tonemapping",
+    "values": "global",
+    "keys": {
+      "GLOBAL": "global",
+      "LOCAL": "local"
+    }
+  },
+  "EXPOSURE_BOTTOM": {
+    "MIN": {
+      "param": "exposure_bottom_min",
+      "values": 20000,
+      "keys": "exposure_bottom_min"
+    },
+    "MAX": {
+      "param": "exposure_bottom_max",
+      "values": 200000,
+      "keys": "exposure_bottom_max"
+    },
+    "NUM": {
+      "param": "exposure_bottom_num",
+      "values": 10,
+      "keys": "exposure_bottom_num"
+    },
+    "NUM_CALIBRATION": {
+      "param": "exposure_bottom_num_calibration",
+      "values": 100,
+      "keys": "exposure_bottom_num_calibration"
+    }
+  },
+  "ExposurePerif": {
+    "MIN": {
+      "param": "exposure_perif_min",
+      "values": 30000,
+      "keys": "exposure_perif_min"
+    },
+    "MAX": {
+      "param": "exposure_perif_max",
+      "values": 500000,
+      "keys": "exposure_perif_max"
+    },
+    "NUM": {
+      "param": "exposure_perif_num",
+      "values": 10,
+      "keys": "exposure_perif_num"
+    },
+    "NUM_CALIBRATION": {
+      "param": "exposure_perif_num_calibration",
+      "values": 100,
+      "keys": "exposure_perif_num_calibration"
+    }
+  },
+  "Sharpening": {
+    "ITTERATION": {
+      "param": "sharpening_itteration",
+      "values": 2,
+      "keys":"sharpening_itteration"
+    },
+    "R": {
+      "param": "sharpening_r",
+      "values": 0.2,
+      "keys":"sharpening_r"
+    },
+    "S": {
+      "param": "sharpening_s",
+      "values": 20,
+      "keys": "sharpening_s"
+    }
+  },
+  "GlobalTonemap": {
+      "BOTTOM": {
+          "GAMMA": {
+              "param": "gamma_bottom",
+              "values": 0.85,
+              "keys": "gamma_bottom"
+          },
+          "SATURATION": {
+              "param": "saturation_bottom",
+              "values": 1.3,
+              "keys": "saturation_bottom"
+          }
+      },
+      "PERIF": {
+          "GAMMA": {
+              "param": "gamma_perif",
+              "values": 1.4,
+              "keys": "gamma_perif"
+          },
+          "SATURATION": {
+              "param": "saturation_perif",
+              "values": 1.5,
+              "keys": "saturation_perif"
+          }
+      }
+  },
+  "LocalTonemap": {
+    "LAMBDA": {
+      "param": "HDR_lambda",
+      "values": 50
+    },
+    "NUM_PX": {
+      "param": "HDR_pixels",
+      "values": 150
+    },
+    "SATURATION": {
+      "param": "local_saturation",
+      "values": 1.0
+    },
+    "GAMMA": {
+      "param": "local_gamma",
+      "values": 2.2
+    },
+    "NUM_TILES": {
+      "param": "batch_size",
+      "values": 24
+    }
+  },
+  "URL": {
+    "AEYA_SERVER_URL": {
+      "param": "aeya_server_url",
+      "values": "194.186.150.221"
+    },
+    "WEB_SERVER_URL": {
+      "param": "web_server_url",
+      "values": "microgen.up6.ru/qcapi/research_upload"
+    },
+    "ML_SERVER_URL": {
+      "param": "ml_server_url",
+      "values": "194.186.150.221"}
+  },
+  "Port": {
+    "AEYA_SERVER_PORT": {
+      "param": "aeya_server_port",
+      "values": "1515"
+    },
+    "WEB_SERVER_PORT": {
+      "param": "web_server_port",
+      "values": ""
+    },
+    "ML_SERVER_PORT": {
+      "param": "ml_server_port",
+      "values": ""
+    }
+  },
+  "GMIC": {
+    "param": "gmic",
+    "values": "rotate 90 -fx_unsharp 1,10,20,2,0,2,1,1,0,0"
+  },
+  "GMIC_CHECK": {
+    "param": "gmic_check",
+    "values": "on",
+    "keys": {
+      "ON": "on",
+      "OFF": "off"
+    }
+  },
+  "ROOT": {
+    "param": "root",
+    "values": "/app/filehosting"
+  },
+  "COMPRESSION": {
+    "param": "compression",
+    "values": 0
+  },
+  "GRACIA_RULE": {
+    "param": "gracia_string_rule",
+    "values": "^([a-zA-Z]{3})[ _-]?(\\d{1,4})([ _-]?(\\d{0,2}))?[ _-](\\d{1,2})$"
+  },
+  "SPOT_RULE": {
+    "param": "spot_string_rule",
+    "values": "^([a-zA-Z]{3})[ _-]?(\\d{1,4})[ _-](\\d{1,3})$"
+  },
+  "X_OFFSET": {
+    "param": "x_offset",
+    "values": 552
+  },
+  "Y_OFFSET": {
+    "param": "y_offset",
+    "values": 0
+  },
+  "Paths": {
+    "param": null,
+    "values": null,
+    "keys": {
+      "SETTINGS": "./images/configs/settings.json",
+      "ICON": "./Icon.ico",
+      "SPOT_IMAGES": "./images/spot-test/",
+      "GRACIA_IMAGES": "./images/gracia-test/",
+      "SOURCE_SPOT": "./images/img_source/spot-test/",
+      "SOURCE_GRACIA": "./images/configs/"
+    }
+  },
+  "GUI": {
+    "param": null,
+    "values": null,
+    "keys": {
+      "MODE": "dark",
+      "THEME": "dark-blue",
+      "TITLE": "Aeya",
+      "SETTINGS_TITLE": "Aeya Настройки",
+      "GEOMETRY": "1280x720",
+      "IMAGE_FRAME_FOREGROUND": "gray",
+      "IMAGE_FRAME_BORDER": "black",
+      "BORDER_WIDTH": 5,
+      "WIDTH": 500,
+      "HEIGHT": 500,
+      "GREEN": "green",
+      "YELLOW": "yellow",
+      "RED": "red",
+      "REACTION_COLOR": "#343638",
+      "INPUT_TEXT_COLOR": "black",
+      "INPUT_TEXT_REACTION_COLOR": "white"
+    }
+  },
+  "GUITexts": {
+    "param": null,
+    "values": null,
+    "keys": {
+      "SPOT": "Спот-тест",
+      "GRACIA": "Метод Грациа",
+      "LOCAL": "Локальное тонирование",
+      "GLOBAL": "Глобальное тонирование",
+      "NOT_CONNECTED": "Камера не подключена",
+      "CONNECTED": "Камера подключена",
+      "CAMERA_ERROR": "Не удалось открыть устройство",
+      "START_TRANSLATION_BUTTON": "Начать трансляцию",
+      "STOP_TRANSLATION_BUTTON": "Прекратить трансляцию",
+      "TRIGGER_BUTTON": "Триггер",
+      "FOLDER_BUTTON": "Папка",
+      "SETTINGS_BUTTON": "Настройки",
+      "SYNC_BUTTON": "Синхронизация",
+      "SETTINGS_SAVE_BUTTON": "Сохранить",
+      "EXPOSURE_BUTTON": "Экспозиция",
+      "MODES_BUTTON": "Режимы",
+      "POSTPROCESSING_BUTTON": "Постобработка",
+      "CALIBRATION_BUTTON": "Калибровка",
+      "CODE_LABEL": "Код:",
+      "EXPOSURE_BOTTOM_LABEL": "Экспозиция просвет",
+      "EXPOSURE_PERIF_LABEL": "Экспозиция периферия",
+      "EXPOSURE_MIN_LABEL": "Минимальная",
+      "EXPOSURE_MAX_LABEL": "Максимальная",
+      "EXPOSURE_NUM_LABEL": "Количество",
+      "EXPOSURE_NUM_CALIBRATION_LABEL": "Количество калибровочное",
+      "POSTPROCESSING_LABEL": "Постобработка",
+      "SHARPENING_ITTERATION_LABEL": "Иттерации резкости",
+      "SHARPENING_R_LABEL": "R резкости",
+      "SHARPENING_S_LABEL": "S резкости",
+      "BOTTOM_TONEMAP_LABEL": "Тонирование просвет",
+      "PERIF_TONEMAP_LABEL": "Тонирование периферия"
+    }
+  }
+}

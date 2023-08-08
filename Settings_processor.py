@@ -1,5 +1,5 @@
 import json
-from resources.Values.CodeValues import Parameters
+from resources.Values.config_creator import ConfigCreator
 from logger import aeya_logger
 
 
@@ -10,7 +10,7 @@ def load_parameters_from_file(file_path):
 
 
 def save_default_settings():
-    parameters_dict = Parameters.get_default_parameters()
+    parameters_dict = ConfigCreator("./resources/Values/config_source.json").process_config()
 
     with open('./images/configs/settings.json', 'w') as outfile:
         json.dump(parameters_dict, outfile, indent=4)

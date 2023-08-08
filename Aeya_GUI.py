@@ -20,7 +20,7 @@ from hdrglobal import processor
 
 import uploader
 # Default parameters:
-from resources.Values import CodeValues
+from resources.Values.config_creator import ConfigCreator
 # Setting processor
 import Settings_processor
 # Setting widgets
@@ -57,6 +57,10 @@ class App(ct.CTk):
     def __init__(self):
         super().__init__()
         aeya_logger.debug("Logger initialized.")
+
+        # Initialize configs and hardcoded values
+        self.config = ConfigCreator("./resources/Values/config_source.json").process()
+        print(self.config.Device.SPOT)
         # Creating all necessary directories if required:
         ph.common_path_handler()
 

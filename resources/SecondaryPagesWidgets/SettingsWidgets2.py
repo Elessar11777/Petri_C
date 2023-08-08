@@ -1,12 +1,12 @@
 from enum import Enum
-from resources.Values import CodeValues
+from resources.Values.config_creator import configurer
 
 
 class ButtonActions(Enum):
-    EXPOSURE_BUTTON = CodeValues.GUITexts.EXPOSURE_BOTTOM.value
-    MODES_BUTTON = CodeValues.GUITexts.MODES_BUTTON.value
-    POSTPROCESSING_BUTTON = CodeValues.GUITexts.POSTPROCESSING_BUTTON.value
-    SETTINGS_SAVE_BUTTON = CodeValues.GUITexts.SETTINGS_SAVE_BUTTON.value
+    EXPOSURE_BUTTON = configurer.GUITexts.EXPOSURE_BUTTON
+    MODES_BUTTON = configurer.GUITexts.MODES_BUTTON
+    POSTPROCESSING_BUTTON = configurer.GUITexts.POSTPROCESSING_BUTTON
+    SETTINGS_SAVE_BUTTON = configurer.GUITexts.SETTINGS_SAVE_BUTTON
 
 
 button_widgets = [
@@ -17,26 +17,26 @@ button_widgets = [
 ]
 
 label_widgets_global = [
-    (CodeValues.GUITexts.POSTPROCESSING_LABEL.value, 0.05, 0.05),
-    (CodeValues.GUITexts.SHARPENING_ITTERATION_LABEL.value, 0.05, 0.13),
-    (CodeValues.GUITexts.SHARPENING_R_LABEL.value, 0.05, 0.21),
-    (CodeValues.GUITexts.SHARPENING_S_LABEL.value, 0.05, 0.29),
-    (CodeValues.GUITexts.BOTTOM_TONEMAP_LABEL.value, 0.05, 0.37),
-    (CodeValues.GUITexts.PERIF_TONEMAP_LABEL.value, 0.05, 0.45)
+    (configurer.GUITexts.POSTPROCESSING_LABEL, 0.05, 0.05),
+    (configurer.GUITexts.SHARPENING_ITTERATION_LABEL, 0.05, 0.13),
+    (configurer.GUITexts.SHARPENING_R_LABEL, 0.05, 0.21),
+    (configurer.GUITexts.SHARPENING_S_LABEL, 0.05, 0.29),
+    (configurer.GUITexts.BOTTOM_TONEMAP_LABEL, 0.05, 0.37),
+    (configurer.GUITexts.PERIF_TONEMAP_LABEL, 0.05, 0.45)
 ]
 
 entry_widgets_global = [
-    (CodeValues.ParameterNames.SHARPENING_ITTERATION.value, 0.25, 0.13),
-    (CodeValues.ParameterNames.SHARPENING_R.value, 0.25, 0.21),
-    (CodeValues.ParameterNames.SHARPENING_S.value, 0.25, 0.29),
-    (CodeValues.ParameterNames.GAMMA_BOTTOM.value, 0.25, 0.37),
-    (CodeValues.ParameterNames.SATURATION_BOTTOM.value, 0.37, 0.37),
-    (CodeValues.ParameterNames.GAMMA_PERIF.value, 0.25, 0.45),
-    (CodeValues.ParameterNames.SATURATION_PERIF.value, 0.37, 0.45)
+    (configurer.Sharpening.ITTERATION, 0.25, 0.13),
+    (configurer.Sharpening.R, 0.25, 0.21),
+    (configurer.Sharpening.S, 0.25, 0.29),
+    (configurer.GlobalTonemap.BOTTOM.GAMMA, 0.25, 0.37),
+    (configurer.GlobalTonemap.BOTTOM.SATURATION, 0.37, 0.37),
+    (configurer.GlobalTonemap.PERIF.GAMMA, 0.25, 0.45),
+    (configurer.GlobalTonemap.PERIF.SATURATION, 0.37, 0.45)
 ]
 
 label_widgets_local = [
-    (CodeValues.GUITexts.POSTPROCESSING_LABEL.value, 0.05, 0.05),
+    (configurer.GUITexts.POSTPROCESSING_LABEL, 0.05, 0.05),
     ("HDR Лямбда", 0.05, 0.13),
     ("HDR Пиксели", 0.05, 0.21),
     ("Насыщенность", 0.05, 0.29),
@@ -45,11 +45,11 @@ label_widgets_local = [
 ]
 
 entry_widgets_local = [
-    (CodeValues.ParameterNames.HDR_LAMBDA.value, 0.25, 0.13),
-    (CodeValues.ParameterNames.HDR_PIXELS.value, 0.25, 0.21),
-    (CodeValues.ParameterNames.LOCAL_SATURATION.value, 0.25, 0.29),
-    (CodeValues.ParameterNames.LOCAL_GAMMA.value, 0.25, 0.37),
-    (CodeValues.ParameterNames.BATCH_SIZE.value, 0.25, 0.45)
+    (configurer.ParameterNames.HDR_LAMBDA, 0.25, 0.13),
+    (configurer.ParameterNames.HDR_PIXELS, 0.25, 0.21),
+    (configurer.ParameterNames.LOCAL_SATURATION, 0.25, 0.29),
+    (configurer.ParameterNames.LOCAL_GAMMA, 0.25, 0.37),
+    (configurer.ParameterNames.BATCH_SIZE, 0.25, 0.45)
 
 ]
 
