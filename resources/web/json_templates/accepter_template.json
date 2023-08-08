@@ -1,0 +1,54 @@
+{
+    "Images": {
+        "B": "image_string",
+        "P": "image_string",
+        "Mask": "image_string"
+    },
+    "Source": {
+        "B": {},
+        "P": {}
+    },
+    "Transport_Source": {
+        "B": {},
+        "P": {}
+    },
+    "Gmic": "gmic_formula",
+    "Gmic_check": "on/off",
+    "Hash": {
+        "Images": {
+            "B": "image_string",
+            "P": "image_string",
+            "Mask": "image_string"
+        },
+        "Source": {
+            "B": {},
+            "P": {}
+        }
+    },
+    "R_Hash": {
+        "Images": {
+            "B": "image_hash_string",
+            "P": "image_hash_string",
+            "Mask": "image_hash_string"
+        },
+        "Source": {
+            "B": {},
+            "P": {}
+        }
+    },
+    "Root": "directory_to_save_in_container",
+    "Meta": {
+        "Date": "DD_MM_YYYY",
+        "Time": "HH_MM_SS",
+        "Research": "gracia/spot",
+        "Bacteria": "ABC",
+        "Code": "0000",
+        "Clone": null,
+        "Type": null,
+        "Phage": null,
+        "Serie": null,
+        "Dilution": null,
+        "Cell": {},
+        "Cupnum": null
+    }
+}

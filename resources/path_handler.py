@@ -2,18 +2,16 @@
 
 from datetime import datetime
 import os
+from resources.Values.CodeValues import Paths
+from logger import aeya_logger
 
 
 
 def common_path_handler():
-    if not os.path.exists('./images/spot-test/'):
-        os.makedirs('./images/spot-test/')
-    if not os.path.exists("./images/gracia-test/"):
-        os.makedirs("./images/gracia-test/")
-    if not os.path.exists("./images/img_source/"):
-        os.makedirs("./images/img_source/")
-    if not os.path.exists("./images/configs/"):
-        os.makedirs("./images/configs/")
+    for path in Paths:
+        if not os.path.exists(os.path.dirname(path.value)):
+            os.makedirs(os.path.dirname(path.value))
+            aeya_logger.info(f"Creating {path.value}.")
 
 
 
