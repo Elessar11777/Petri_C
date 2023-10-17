@@ -17,11 +17,11 @@ button_widgets = [
 
 segmented_button_widgets =[
     ([CodeValues.GUITexts.GRACIA.value, CodeValues.GUITexts.SPOT.value], 0.05, 0.05),
-    ([CodeValues.GUITexts.LOCAL.value, CodeValues.GUITexts.GLOBAL.value], 0.05, 0.13)
+    ([CodeValues.GUITexts.LOCAL.value, CodeValues.GUITexts.GLOBAL.value, CodeValues.GUITexts.EF.value], 0.05, 0.13)
     ]
 
 segmented_button_logic = [
     (CodeValues.ParameterNames.DEVICE.value, (CodeValues.Device.SPOT.value, CodeValues.GUITexts.SPOT.value), (CodeValues.Device.GRACIA.value, CodeValues.GUITexts.GRACIA.value)),
-    (CodeValues.ParameterNames.PROCESSING_MODE.value, (CodeValues.ProcessingModes.LOCAL.value, CodeValues.GUITexts.LOCAL.value), (CodeValues.ProcessingModes.GLOBAL.value, CodeValues.GUITexts.GLOBAL.value))
+    (CodeValues.ParameterNames.PROCESSING_MODE.value, (CodeValues.ProcessingModes.LOCAL.value, CodeValues.GUITexts.LOCAL.value, CodeValues.ProcessingModes.EF.value), (CodeValues.ProcessingModes.GLOBAL.value, CodeValues.GUITexts.GLOBAL.value, CodeValues.GUITexts.EF.value))
 ]
 

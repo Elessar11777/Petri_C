@@ -2,7 +2,6 @@ from enum import Enum
 from resources.Values import CodeValues
 from resources.Values import CameraValues
 
-
 class ButtonActions(Enum):
     SETTINGS_SAVE_BUTTON = CodeValues.GUITexts.SETTINGS_SAVE_BUTTON.value
     EXPOSURE_BOTTOM = CodeValues.GUITexts.EXPOSURE_BOTTOM.value

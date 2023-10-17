@@ -444,15 +444,22 @@ class App(ct.CTk):
 
             if segmented_button_widgets is not None:
                 for i, sbw in enumerate(segmented_button_widgets, start=0):
+                    if i == 0:
+                        state = "normal"
+                    elif i == 1:
+                        state = "disabled"
+
                     segmented_button_widget = self.create_segmented_button(master=page,
                                                                            values=sbw[0],
                                                                            command=segmented_button_action_list[i],
                                                                            relx=sbw[1],
-                                                                           rely=sbw[2])
+                                                                           rely=sbw[2],
+                                                                           state=state)
                     if self.parameters[segmented_button_logic[i][0]].get() == segmented_button_logic[i][1][0]:
                         segmented_button_widget.set(segmented_button_logic[i][1][1])
                     elif self.parameters[segmented_button_logic[i][0]].get() == segmented_button_logic[i][2][0]:
                         segmented_button_widget.set(segmented_button_logic[i][2][1])
+
 
                     widgets_dict["segmented_buttons"].append(segmented_button_widget)
             aeya_logger.debug("Additional page configured.")
@@ -478,9 +485,9 @@ class App(ct.CTk):
         except Exception as e:
             aeya_logger.error(e)
 
-    def create_segmented_button(self, master, values, command, relx, rely):
+    def create_segmented_button(self, master, values, command, relx, rely, state):
         try:
-            segmented_button = ct.CTkSegmentedButton(master=master, values=values, command=command)
+            segmented_button = ct.CTkSegmentedButton(master=master, values=values, command=command, state=state)
             segmented_button.place(relx=relx, rely=rely)
             aeya_logger.debug("Segmented button widget created.")
             return segmented_button
@@ -950,7 +957,6 @@ class App(ct.CTk):
             b_image_list = [value.astype(numpy.float32) / 255.0 for value in b_unnormalized]
 
             result_b = MEF.process(b_image_list, gray=60, pixel_balance=0.5)
-
 
             for exposure, image in client.images["Source"]["P"].items():
                 client.images["Source"]["P"][exposure] = contouring.applying_mask(image, mask)

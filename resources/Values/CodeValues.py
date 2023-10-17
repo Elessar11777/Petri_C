@@ -46,6 +46,7 @@ class GUITexts(Enum):
     # Tonemap Modes
     LOCAL = "Локальное тонирование"
     GLOBAL = "Глобальное тонирование"
+    EF = "Слияние экспозиций"
     # Camera connection status
     NOT_CONNECTED = "Камера не подключена"
     CONNECTED = "Камера подключена"
@@ -179,7 +180,7 @@ class Parameters():
             ParameterNames.GAMMA_PERIF.value: 1.4,
             ParameterNames.SATURATION_PERIF.value: 1.5,
             ParameterNames.DEVICE.value: "Spot",
-            ParameterNames.PROCESSING_MODE.value: "global",
+            ParameterNames.PROCESSING_MODE.value: "ef",
             "HDR_lambda": 50,
             "HDR_pixels": 150,
             "local_saturation": 1,
