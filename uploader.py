@@ -1,15 +1,11 @@
 import os
 import time
 import queue
-from logger import aeya_logger
+from Petri_C.resources.logger.logger import aeya_logger
 import db_manager
-import threading
 import requests
 import json
-from resources.Values import CodeValues
 import Settings_processor
-import multiprocessing
-
 
 
 class JsonSender():

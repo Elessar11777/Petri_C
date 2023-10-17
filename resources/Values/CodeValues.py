@@ -10,6 +10,7 @@ class Modes(Enum):
 class ProcessingModes(Enum):
     GLOBAL = "global"
     LOCAL = "local"
+    EF = "ef"
 class Paths(Enum):
     SETTINGS = './images/configs/settings.json'
     ICON = "./Icon.ico"

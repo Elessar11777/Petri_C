@@ -1,24 +1,23 @@
 # -*- coding: utf-8 -*-
 import tkinter as tk
 import threading
+import json
+import os
+import sys
+import multiprocessing
+import time
+
 import numpy
 from PIL import Image
 import customtkinter as ct
-import json
 import webbrowser
-import os
-import sys
 import gxipy as gx
-import cv2
-import subprocess
-import multiprocessing
 import ping3
-import time
 from uploader import JsonSender
-from hdrglobal import processor
+
+from resources.exposure_fusion.exposure_fusion import MEF
 
 
-import uploader
 # Default parameters:
 from resources.Values import CodeValues
 # Setting processor
@@ -35,9 +34,9 @@ from resources.local_tonemapping import accept_image, hdr_debevec, irradiance, p
 from resources.web import json_former
 import db_manager
 # Mask countouring resources
-from resources.contouring import countoring
+from resources.contouring import contouring
 # Logger
-from logger import aeya_logger
+from Petri_C.resources.logger.logger import aeya_logger
 
 def resource_path(relative_path):
     """ Get absolute path to resource, works for dev and for PyInstaller """
@@ -75,13 +74,6 @@ class App(ct.CTk):
             f.write(str(self.upload_process.pid))
 
         self.database = db_manager.DBManager()
-
-        # self.status_var = tk.StringVar()
-        # self.status_var.set("")
-        # status_label = ct.CTkLabel(self, textvariable=self.status_var)
-        # status_label.pack(pady=80)
-
-        # self.update_label()
 
         # Attempt to load parameters from a settings file. If the file does not exist or is not valid JSON,
         # create a new settings file with default parameters.
@@ -634,7 +626,7 @@ class App(ct.CTk):
     def image_setter(self, selector, image, mask, masking=False):
         try:
             if masking:
-                image = countoring.applying_mask(image, mask)
+                image = contouring.applying_mask(image, mask)
             else:
                 pass
 
@@ -894,8 +886,14 @@ class App(ct.CTk):
         ie.CRF_JSON_exporter(CRF, selector)
 
     def image_transform(self, client, mode):
+        # TODO: TEMP ONLY EF MODE!
+        mode = CodeValues.ProcessingModes.EF.value
+
         aeya_logger.info(f"Call image_transform with mode: {mode}")
-        mask = countoring.contour_cutter_circ(BP_images_dict=client.images["Source"])
+        b_unnormalized = list(client.images["Source"]["B"].values())
+        b_image_list = [value.astype(numpy.float32) / 255.0 for value in b_unnormalized]
+        mask = contouring.contour_cutter_circ(b_img_list=b_image_list)
+
 
         if mode == CodeValues.ProcessingModes.GLOBAL.value:
             result_b = processor.processor(
@@ -946,6 +944,32 @@ class App(ct.CTk):
             img_for_tk = client.result_image_filler(result_dict, compression=self.parameters[CodeValues.ParameterNames.COMPRESSION.value].get())
             self.image_setter("B", img_for_tk["B"], mask=img_for_tk["Mask"])
             self.image_setter("P", img_for_tk["P"], mask=img_for_tk["Mask"])
+
+        elif mode == CodeValues.ProcessingModes.EF.value:
+            b_unnormalized = list(client.images["Source"]["B"].values())
+            b_image_list = [value.astype(numpy.float32) / 255.0 for value in b_unnormalized]
+
+            result_b = MEF.process(b_image_list, gray=60, pixel_balance=0.5)
+
+
+            for exposure, image in client.images["Source"]["P"].items():
+                client.images["Source"]["P"][exposure] = contouring.applying_mask(image, mask)
+
+            p_unnormalized = list(client.images["Source"]["P"].values())
+            p_image_list = [value.astype(numpy.float32) / 255.0 for value in p_unnormalized]
+
+            result_p = MEF.process(p_image_list, gray=100, pixel_balance=0.1)
+
+            result = {}
+            result["B"] = result_b
+            result["P"] = result_p
+            result["Mask"] = mask
+
+            img_for_tk = client.result_image_filler(result, compression=self.parameters[
+                CodeValues.ParameterNames.COMPRESSION.value].get())
+            self.image_setter("B", img_for_tk["B"], mask=img_for_tk["Mask"])
+            self.image_setter("P", img_for_tk["P"], mask=img_for_tk["Mask"])
+
 if __name__ == "__main__":
     multiprocessing.freeze_support()
     gui = App()

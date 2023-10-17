@@ -7,12 +7,11 @@ import re
 import hashlib
 import os
 import sys
-from logger import aeya_logger
+from resources.logger.logger import aeya_logger
 import io
 from PIL import Image
 import copy
 import numpy as np
-from resources.Values import CodeValues
 
 class HTTPRequester:
     def __init__(self, parameters_dict, research="gracia", gmic_request="mirror y -fx_unsharp 1,10,20,2,0,2,1,1,0,0", gmic_check="on",

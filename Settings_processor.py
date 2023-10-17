@@ -1,6 +1,6 @@
 import json
 from resources.Values.CodeValues import Parameters
-from logger import aeya_logger
+from Petri_C.resources.logger.logger import aeya_logger
 
 
 def load_parameters_from_file(file_path):

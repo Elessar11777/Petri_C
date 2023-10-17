@@ -3,7 +3,7 @@
 from datetime import datetime
 import os
 from resources.Values.CodeValues import Paths
-from logger import aeya_logger
+from resources.logger.logger import aeya_logger
 
 
 

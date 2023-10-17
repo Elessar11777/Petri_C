@@ -1,8 +1,5 @@
 import numpy as np
 
-from matplotlib import rc
-rc('font', size=30)
-
 def hist_equalize(I, numtiles=(8, 8)):
     assert I.shape[0] % numtiles[0] == 0 and I.shape[1] % numtiles[1] == 0
     img_range = np.array([0, 1])
@@ -36,29 +33,9 @@ def maketile_mapping(I, numtiles, tile_size, selected_range, full_range, num_bin
             # print('\tclip hist', end=',')
             tile_hist = clip_histogram(tile_hist, clip_limit, num_bins)
 
-            """ plot histogram
-            fig = plt.figure(figsize=(20, 12))
-            plt.bar(np.arange(256) / 256., tile_hist, width=0.005, edgecolor='b');
-            plt.xlim(0, 1);
-            plt.xlabel('intensity');
-            plt.ylabel('count');
-            plt.tight_layout()
-            plt.savefig('../result/intermediate/histogram/hist{}{}.pdf'.format(tile_row, tile_col));
-            """
-
             # print('\tmake mapping')
             tile_mapping = make_mapping(tile_hist, selected_range, num_pixel_in_tile)
             tile_mappings[-1].append(tile_mapping)
-
-            """ plot mapping
-            fig = plt.figure(figsize=(20, 12))
-            plt.plot(np.arange(256) / 256., tile_mapping, lw=2);
-            plt.xlim(0, 1);
-            plt.xlabel('x');
-            plt.ylabel('f(x)');
-            plt.tight_layout()
-            plt.savefig('../result/intermediate/histogram/mapping{}{}.pdf'.format(tile_row, tile_col));
-"""
 
             image_col += tile_size[1]
         image_row += tile_size[0]

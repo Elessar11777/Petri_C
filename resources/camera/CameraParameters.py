@@ -1,6 +1,6 @@
 from resources.Values import CameraValues
 import gxipy as gx
-from logger import aeya_logger
+from resources.logger.logger import aeya_logger
 
 
 def set_parameters(camera, parameters):

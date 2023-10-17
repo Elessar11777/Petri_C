@@ -1,6 +1,6 @@
 import numpy as np
 from resources.local_tonemapping.crf import crf_solve
-from logger import aeya_logger
+from resources.logger.logger import aeya_logger
 import cv2
 
 def hdr_debevec(image_exposure_dict, lambda_=50, num_px=150):
